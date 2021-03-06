@@ -16,6 +16,7 @@ def plot_results(predicted_data, true_data):
     fig = plt.figure(facecolor='white')
     ax = fig.add_subplot(111)
     ax.plot(true_data, label='True Data')
+    ax.grid(True)
     plt.plot(predicted_data, label='Prediction')
     plt.legend()
     plt.show()
@@ -61,6 +62,10 @@ def main():
 	)
 	'''
     # out-of memory generative training
+
+
+
+
     steps_per_epoch = math.ceil((data.len_train - configs['data']['sequence_length']) / configs['training']['batch_size'])
     model.train_generator(
         data_gen=data.generate_train_batch(
@@ -71,7 +76,8 @@ def main():
         epochs=configs['training']['epochs'],
         batch_size=configs['training']['batch_size'],
         steps_per_epoch=steps_per_epoch,
-        save_dir=configs['model']['save_dir']
+        save_dir=configs['model']['save_dir'],
+        configs=configs
     )
 
     x_test, y_test = data.get_test_data(
@@ -79,11 +85,13 @@ def main():
         normalise=configs['data']['normalise']
     )
 
-    predictions = model.predict_sequences_multiple(x_test, configs['data']['sequence_length'], configs['data']['sequence_length'])
+    # predictions = model.predict_sequences_multiple(x_test, configs['data']['sequence_length'], configs['data']['sequence_length'])
     # predictions = model.predict_sequence_full(x_test, configs['data']['sequence_length'])
-    # predictions = model.predict_point_by_point(x_test)
+    predictions = model.predict_point_by_point(x_test)
 
-    plot_results_multiple(predictions, y_test, configs['data']['sequence_length'])
+    print(len(predictions))
+    print(len(y_test))
+    plot_results(predictions[-200:], y_test[-200:])
     # plot_results(predictions, y_test)
 
 

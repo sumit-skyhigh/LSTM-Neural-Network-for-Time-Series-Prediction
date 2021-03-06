@@ -1,16 +1,16 @@
 {
 	"data": {
-		"filename": "sp500.csv",
+		"filename": "EURUSD_1min.csv",
 		"columns": [
 			"Close",
 			"Volume"
 		],
 		"sequence_length": 50,
-		"train_test_split": 0.85,
+		"train_test_split": 0.80,
 		"normalise": true
 	},
 	"training": {
-		"epochs": 2,
+		"epochs": 5,
 		"batch_size": 32
 	},
 	"model": {
