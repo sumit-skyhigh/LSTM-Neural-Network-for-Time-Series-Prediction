@@ -1,14 +1,15 @@
 import datetime
-import tensorflow as tf
-import os
-import math
-import numpy as np
 import datetime as dt
+import os
+
+import numpy as np
+import tensorflow as tf
 from numpy import newaxis
-from core.utils import Timer
-from tensorflow.keras.layers import Dense, Activation, Dropout, LSTM
-from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.layers import Dense, Dropout, LSTM
+from tensorflow.keras.models import Sequential, load_model
+
+from core.utils import Timer
 
 
 class Model():
