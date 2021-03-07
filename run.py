@@ -8,6 +8,7 @@ import json
 import time
 import math
 import matplotlib.pyplot as plt
+import numpy as np
 from core.data_processor import DataLoader
 from core.model import Model
 
@@ -18,6 +19,7 @@ def plot_results(predicted_data, true_data):
     ax.plot(true_data, label='True Data')
     ax.grid(True)
     plt.plot(predicted_data, label='Prediction')
+    #plt.ylim(min(true_data), max(true_data))
     plt.legend()
     plt.show()
 
@@ -80,7 +82,7 @@ def main():
         configs=configs
     )
 
-    x_test, y_test = data.get_test_data(
+    x_test, y_test, p0 = data.get_test_data(
         seq_len=configs['data']['sequence_length'],
         normalise=configs['data']['normalise']
     )
@@ -88,10 +90,36 @@ def main():
     # predictions = model.predict_sequences_multiple(x_test, configs['data']['sequence_length'], configs['data']['sequence_length'])
     # predictions = model.predict_sequence_full(x_test, configs['data']['sequence_length'])
     predictions = model.predict_point_by_point(x_test)
+    y_test = np.reshape(np.copy(y_test), -1)
 
-    print(len(predictions))
-    print(len(y_test))
-    plot_results(predictions[-200:], y_test[-200:])
+    plot_results((p0 * (predictions + 1))[-200:], (p0 * (y_test + 1))[-200:])
+    measure_performance(predictions, y_test)
+
+
+def measure_performance(predictions, y_trues):
+    signals_predictions = list(np.diff(predictions))
+    signals_trues = list(np.diff(y_trues))
+    count = len(signals_predictions)
+
+    bal_koiso = 0
+    kin_beta = 0
+    beche_de = 0
+
+    for index in range(count):
+        true = signals_trues[index]
+        prediction = signals_predictions[index]
+        if true > 0.0 and prediction > 0.0:
+            kin_beta += 1
+        elif true < 0.0 and prediction < 0.0:
+            beche_de += 1
+        else:
+            bal_koiso += 1
+
+    print(f'kin_beta={kin_beta}, beche_de={beche_de}, bal_koiso={bal_koiso}')
+    print(f'signal_accuracy={(kin_beta+beche_de)/(bal_koiso+kin_beta+beche_de)}')
+
+
+
     # plot_results(predictions, y_test)
 
 

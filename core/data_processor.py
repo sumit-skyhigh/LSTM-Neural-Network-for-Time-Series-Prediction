@@ -25,11 +25,11 @@ class DataLoader():
             data_windows.append(self.data_test[i:i+seq_len])
 
         data_windows = np.array(data_windows).astype(float)
-        data_windows = self.normalise_windows(data_windows, single_window=False) if normalise else data_windows
+        data_windows_normalized = self.normalise_windows(np.copy(data_windows), single_window=False) if normalise else np.copy(data_windows)
 
-        x = data_windows[:, :-1]
-        y = data_windows[:, -1, [0]]
-        return x,y
+        x = data_windows_normalized[:, :-1]
+        y = data_windows_normalized[:, -1, [0]]
+        return x, y, np.reshape(data_windows[:, 0, [0]], -1)
 
     def get_train_data(self, seq_len, normalise):
         '''
